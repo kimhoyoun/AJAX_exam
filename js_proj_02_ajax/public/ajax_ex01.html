@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Ajax 연습</h1>
+  <button id ="okBtn">확인</button>
+  <div id = "resultBox">결과</div>
+
+  <script>
+    // Ajax - 화면의 새로 고침 없이 서버에서 내용을 가져온다.
+    const xhr = new XMLHttpRequest();
+    console.dir(xhr);
+
+    var okBtn = document.getElementById("okBtn");
+    var resultBox = document.getElementById("resultBox");
+
+    okBtn.onclick = function(){
+      console.log('클릭햇습니다.');
+      xhr.onreadystatechange = function(){
+        // 서버에 요청한 이벤트가 발생하면 실행되는 함수.
+        // status가 200이고, readyStat가 4일 때 정상처리됨을 확인할 수 있다.
+        if(this.readyState == 4&& this.status == 200){
+          //console.log(this.responseText);
+          // this.responseText는 문자열이므로 객체로 바꿔줘야함.
+          // javascript에는 문자열을 객체로 변환해주는 함수가 있음.
+          // JSON.parse는 객체로 바꿔주지만 파라미터를 정확히 맞춰줘야함
+          // eval은 정확하지 않아도 바꿔주긴하지만 보안에 취약하여 권장하지 않음.
+          // eval은 백도어를 만들 수 있고 외부에서 백도어를 통해 서버로 들어와 문제를 발생시킬 수 있음.
+          // 따라서 까다롭긴 하지만 JSON.parse를 사용.
+          var data = JSON.parse(this.responseText);
+          console.log(this.responseText);
+          var tagData = `<h3>${data.user}:${data.message}</h3>`;
+          resultBox.innerHTML = tagData;
+        }
+      }
+
+      // open메소드를 사용해서 서버로 요청을 보냄
+      // 1. 요청 서버의 주소를 등록.
+      //  xhr.open("GET","http://localhost:3000/data/hoho/HELLO",true);
+      //xhr.open("GET","http://localhost:3000/home",true);
+      // 2. 실행한다.
+      // xhr.send();
+
+
+      // post 처리
+   
+
+      xhr.open("POST","http://localhost:3000/input",true);
+      // 바디에 포함된 데이터를 쿼리스트링으로 send()에 넣어준다.
+
+      // post 요청 시 폼 형태로 header를 변경해야 한다.
+      // 순서가 중요!
+      // open -> header 설정 -> send
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.send('user=KIM&message=Hi');
+    };
+  </script>
+</body>
+</html>
